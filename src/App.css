@@ -1,10 +1,13 @@
-body{
-  height: 100vh; 
+body {
+  height: 100vh;
   display: flex;
-  justify-content: center; 
-  align-items: center; 
-background: linear-gradient(45deg,#f2e7ed,#cabdce, #bfb2c6);
-
+  justify-content: center;
+  align-items: center;
+  background: linear-gradient(360deg, #ffffff37, #d1c1d5, #bfb2c686);
+  /* background-image: url('../src/assets/images/b3.jpg'); */
+  /* background-repeat: no-repeat; */
+  /* background-size: cover; */
+  /* overflow: hidden;  */
 }
 
 * {
@@ -12,4 +15,15 @@ background: linear-gradient(45deg,#f2e7ed,#cabdce, #bfb2c6);
   padding: 0;
   box-sizing: border-box;
 }
+footer {
+  /* position: fixed; */
+  bottom: 0;
+  width: 100%;
+  text-align: center;
+  margin-bottom: 10px;
+  font-size: 13px;
+}
 
+.ai-fracture {
+  color: rgb(91, 91, 188); /* Change the color to your desired color */
+}
