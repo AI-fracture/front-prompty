@@ -1,17 +1,28 @@
 import React from 'react'
 import './TextBox.css'
+import React, { useState } from 'react';
 
-export function TextBox(props) {
-    
+const ChatBox = ({ onMessageSubmit }) => {
+  const [message, setMessage] = useState('');
 
-    return (
-        <>
-            
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    onMessageSubmit(message);
+    setMessage('');
+  };
 
+  return (
+    <form onSubmit={handleSubmit} className="chat-box">
+      <input
+        type="text"
+        value={message}
+        onChange={(e) => setMessage(e.target.value)}
+        placeholder="Type your message here..."
+      />
+      <button type="submit">Send</button>
+    </form>
+  );
+};
 
-<h1>naderrrrrrrrrrr</h1>
+export default ChatBox;
 
-
-        </>
-    )
-}

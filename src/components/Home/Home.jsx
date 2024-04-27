@@ -1,5 +1,7 @@
 import React from 'react'
-import { Textbox } from '../TextBox/TextBox'
+import './Home.css'
+import { ChatBody } from '../ChatBody/ChatBody'
+import { Shape } from '../shape/Shape'
 
 export function Home(props) {
     
@@ -7,7 +9,22 @@ export function Home(props) {
     return (
         <>
 
-         <Textbox/>   
+
+<div className='home' id='flex-container'>
+
+
+<div className='chatbody'>
+<Shape/>
+<ChatBody/>
+
+</div>
+
+
+<div className='validation'></div>
+<div className='textbox'></div>
+
+
+</div>
         </>
     )
 }
