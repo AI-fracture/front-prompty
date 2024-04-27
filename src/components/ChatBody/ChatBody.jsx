@@ -5,6 +5,8 @@ import axios from 'axios';
 export function ChatBody() {
   const [message, setMessage] = useState('');
   const [chatHistory, setChatHistory] = useState([]);
+  const [showEndChatModal, setShowEndChatModal] = useState(false);
+  const [chatEnded, setChatEnded] = useState(false); // State to track whether chat has ended
 
   const sendMessage = async () => {
     if (message.trim() === '') return;
@@ -24,12 +26,11 @@ export function ChatBody() {
       };
 
       try {
-        const response = await axios.post('https://542d-109-107-242-237.ngrok-free.app/gen/', requestBody, {
+        const response = await axios.post('https://d429-109-107-225-147.ngrok-free.app/gen/', requestBody, {
           headers: {
             'Content-Type': 'application/json'
           }
         });
-
         // Check if the system's response contains code
         const systemResponse = response.data.prompt;
         const responseParts = systemResponse.split('```');
@@ -71,14 +72,57 @@ export function ChatBody() {
     }
   };
 
-  useEffect(() => {
-    // Load chat history on component mount
-    setChatHistory([]);
-  }, []);
-
   const copyToClipboard = (content) => {
     navigator.clipboard.writeText(content);
     alert('Copied to clipboard!');
+  };
+
+  const handleEndChat = () => {
+    // Show end chat confirmation modal
+    setShowEndChatModal(true);
+  };
+
+  const handleEndChatConfirm = async () => {
+    // Hide end chat confirmation modal
+    setShowEndChatModal(false);
+    // Update state to indicate chat has ended
+    setChatEnded(true);
+  
+    // Get the latest user message
+    const latestUserMessage = chatHistory[chatHistory.length - 1].content[0].props.children;
+    if (!latestUserMessage) {
+      console.error('No user message found to send for humanization.');
+      return;
+    }
+  
+    // Construct the request body with the latest user message
+    const requestBody = {
+      role: 'system',
+      content: latestUserMessage
+    };
+  
+    try {
+      const response = await axios.post('https://d429-109-107-225-147.ngrok-free.app/hue/', requestBody, {
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+  
+      // Extract the response content
+      const responseData = response.data.prompt;
+  
+      // Append the response content to chat history
+      setChatHistory([...chatHistory, { role: 'system', content: responseData }]);
+    } catch (error) {
+      console.error('Error sending end chat request:', error);
+      // Handle errors
+    }
+  };
+  
+
+  const handleEndChatCancel = () => {
+    // Hide end chat confirmation modal
+    setShowEndChatModal(false);
   };
 
   return (
@@ -88,19 +132,32 @@ export function ChatBody() {
           <div key={index}>
             {chat.role === 'user' ? (
               <div id='user'>
-                <img src='../../src/assets/images/usericon.png' alt='user' id='userimage'/>
+                <img src='../../src/assets/images/wuser.png' alt='user' id='userimage'/>
                 <div id='userm'>{chat.content}</div>
               </div>
             ) : (
               <div id='system'>   
                 <img src='../../src/assets/images/sys.gif' alt='sys' id='sysimage'/> 
                 <div id='sysm' style={{ textAlign: 'left' }}>{chat.content}</div>
-                <button id='endchat'>End chat</button>
+                {/* Only render the "End chat" button if chat hasn't ended */}
+                {!chatEnded && <button id='endchat' onClick={handleEndChat}>End chat</button>}
               </div>
             )}
           </div>
         ))}
       </div>
+
+      {/* End chat confirmation modal */}
+      {showEndChatModal && (
+        <div className="end-chat-modal">
+          <p>Do you want to humanize it?</p>
+          <div>
+            <button id='yes' onClick={handleEndChatConfirm}>Yes</button>
+            <button id='no' onClick={handleEndChatCancel}>No</button>
+          </div>
+        </div>
+      )}
+
       <div>
         <input 
           id='textbox'
